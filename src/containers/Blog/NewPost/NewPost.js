@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import {Redirect} from 'react-router-dom';
 
 import './NewPost.css';
 
@@ -7,7 +8,12 @@ class NewPost extends Component {
     state = {
         title: '',
         content: '',
-        author: 'Max'
+        author: 'Max',
+        submitted: false //i
+    }
+
+    componentDidMount () {
+        console.log(this.props);
     }
 
     postDataHandler = () => {
@@ -19,12 +25,19 @@ class NewPost extends Component {
         axios.post('/posts', data )
             .then(response => {
                 console.log(response);
+                this.props.history.push('/posts'); //can use replace to replace and cannot click back button
+                // this.setState({submitted: true}); //i
             });        
     }
 
     render () {
+        // let redirect =null;
+        // if(this.state.submitted) {
+        //     redirect = <Redirect to ="/posts"/> //i conditional redirect
+        // }
         return (
             <div className="NewPost">
+                {/* {redirect} i */}
                 <h1>Add a Post</h1>
                 <label>Title</label>
                 <input type="text" value={this.state.title} onChange={(event) => this.setState({title: event.target.value})} />

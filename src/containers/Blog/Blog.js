@@ -1,74 +1,51 @@
 import React, { Component } from 'react';
 //import axios from 'axios';
-import axios from '../../axios';
-import Post from '../../components/Post/Post';
-import FullPost from '../../components/FullPost/FullPost';
-import NewPost from '../../components/NewPost/NewPost';
+// import axios from '../../axios';
+import  { Route, NavLink,Switch, Redirect } from 'react-router-dom'; //route obj, rout component //Href replaced by Link
+import Posts from './Posts/Posts';
+import NewPost from './NewPost/NewPost';
+// import FullPost from './FullPost/FullPost';
 import './Blog.css';
 
+
 class Blog extends Component {
-    state ={
-        posts: [],
-        selectedPostId: null,
-        error: false
-
-    }
-
-    componentDidMount() {
-        axios.get('/posts')
-        .then(response => {
-            const posts = response.data.slice(0, 4); //restrict the amount of data only from 0 to 3. actually fetch them all, but only stores 4 of them(0, 1, 2, 3, (exclude 4))
-            const updatedPosts =  posts.map (post => {
-                return {
-                    ...post,
-                    author: 'Nhan'
-                }
-            });
-            this.setState({posts: updatedPosts});
-
-            // console.log(response);
-        })
-        .catch(error => {
-            console.log(error);
-            this.setState({error: true});
-
-        }); 
-    }
-    postSelectedHandler = (id) => {
-        this.setState({selectedPostId: id});
-    }
     render () {
-        let posts = <p style={{textAlign: 'center'}}>Something went wrong</p>;// error: true so it will show this line
-        if(!this.state.error) {// !true because we use this.setState(error: true)
-            posts = this.state.posts.map(post => {
-                return <Post 
-                    key={post.id} 
-                    title={post.title} 
-                    author={post.author}
-                    clicked={() => this.postSelectedHandler(post.id)}
-                    />;
-            });
-        }
         return (
             <div className="Blog">
                 <header>
                     <nav>
-                        <ul>
-                            <li><a href="/">Home</a></li>
-                            <li><a href="/new-post">New Post</a></li>
-
+                        <ul> 
+                            <li><NavLink 
+                                to ="/posts/" 
+                                exact
+                                activeClassName="my-active"
+                                activeStyle={{
+                                    color:'#fa923f',
+                                    textDecoration:'underline'
+                                }}>Posts</NavLink></li> {/* href: this method will reload the page not rerender the page, so all the current state will be lost*/ }{/* navLink to Specify Which Element in a Navigation Bar Is Active*/ /*override the active class by activeClassName */ }
+                            <li><NavLink 
+                                to={{ //object //first curly brackets to output dynamic content, second one for object
+                                pathname: '/new-post',
+                                hash: '#submit',
+                                search: '?quick-submit=true'
+                            }}>New Post</NavLink></li>
                         </ul>
                     </nav>
                 </header>
-                <section className="Posts">
-                   {posts}
-                </section>
-                <section>
+                {/* <Route path="/" exact render={ () => <h1>HOME</h1>}/> The exact param disables the partial matching for a route and makes sure that it only returns the route if the path is an EXACT match to the current url. */}
+                {/*<Switch> is unique in that it renders a (only one) route exclusively. In contrast, every <Route> that matches the location renders inclusively.*/}
+                <Switch>  
+                    <Route path="/new-post" component={NewPost} />
+                    <Route path="/posts"  component={Posts}  />
+                    <Redirect from="/" to ="/posts" /> {/*automatically redirected to url :/posts */}
+                </Switch>
+                
+                {/* <section>
                     <FullPost id={this.state.selectedPostId}/>
                 </section>
                 <section>
                     <NewPost />
-                </section>
+                </section> */}
             </div>
         );
     }
