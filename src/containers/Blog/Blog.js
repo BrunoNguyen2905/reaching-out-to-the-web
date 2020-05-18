@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-//import axios from 'axios';
-// import axios from '../../axios';
 import  { Route, NavLink,Switch, Redirect } from 'react-router-dom'; //route obj, rout component //Href replaced by Link
 import Posts from './Posts/Posts';
-import NewPost from './NewPost/NewPost';
-// import FullPost from './FullPost/FullPost';
+import asynComponent from '../../hoc/asyncComponent';
 import './Blog.css';
 
-
+const asyncNewPost = asynComponent(() => {
+    return import( './NewPost/NewPost');
+})
 class Blog extends Component {
+    state ={
+        auth: true
+    }
     render () {
         return (
             <div className="Blog">
@@ -35,17 +37,12 @@ class Blog extends Component {
                 {/* <Route path="/" exact render={ () => <h1>HOME</h1>}/> The exact param disables the partial matching for a route and makes sure that it only returns the route if the path is an EXACT match to the current url. */}
                 {/*<Switch> is unique in that it renders a (only one) route exclusively. In contrast, every <Route> that matches the location renders inclusively.*/}
                 <Switch>  
-                    <Route path="/new-post" component={NewPost} />
+                    {this.state.auth ? <Route path="/new-post" component={asyncNewPost} />: null}
                     <Route path="/posts"  component={Posts}  />
-                    <Redirect from="/" to ="/posts" /> {/*automatically redirected to url :/posts */}
+                    <Route render= {() => <h1>404 Not Found</h1>}/> {/*any unknown(404) case will render this/ dont worl w redirect */}
+                    {/* <Redirect from="/" to ="/posts" /> automatically redirected to url :/posts */}
                 </Switch>
                 
-                {/* <section>
-                    <FullPost id={this.state.selectedPostId}/>
-                </section>
-                <section>
-                    <NewPost />
-                </section> */}
             </div>
         );
     }

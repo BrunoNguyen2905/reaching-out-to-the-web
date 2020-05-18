@@ -7,7 +7,8 @@ class App extends Component {
   render() {
     return (
       //turn on routing 
-      <BrowserRouter> 
+      // <BrowserRouter basename="/my-app"> 
+      <BrowserRouter > 
         <div className="App">
           <Blog />
         </div>
